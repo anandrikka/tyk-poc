@@ -1,0 +1,24 @@
+{
+  "name": "Demo",
+  "slug": "demo",
+  "api_id": "demo",
+  "org_id": "1",
+  "definition": {
+    "location": "header",
+    "key": "x-api-version"
+  },
+  "use_keyless": true,
+  "proxy": {
+    "listen_path": "/a;;",
+    "target_url": "https://jsonplaceholder.typicode.com"
+  },
+  "version_data": {
+    "not_versioned": true,
+    "versions": {
+      "Default": {
+          "name": "Default"
+      }
+    }
+  },
+  "active": true
+}

@@ -1,0 +1,77 @@
+services:
+  tyk:
+    platform: linux/arm64/v8
+    build:
+      context: ./api-gateway
+    ports:
+      - 8080:8080
+    environment:
+      - TYK_GW_SECRET=not_a_secret
+      - TYK_GW_LOGLEVEL=debug
+    depends_on:
+      - redis
+    networks:
+      - tyk
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./api-gateway/tyk.conf
+          target: /opt/tyk-gateway/tyk.conf
+        - action: sync+restart
+          path: ./api-gateway/apps
+          target: /opt/tyk-gateway/apps
+        - action: sync+restart
+          path: ./api-gateway/middleware
+          target: /opt/tyk-gateway/middleware
+        - action: sync+restart
+          path: ./api-gateway/certs
+          target: /opt/tyk-gateway/certs
+        - action: sync+restart
+          path: ./api-gateway/policies
+          target: /opt/tyk-gateway/policies
+  redis:
+    image: redis:6.2.7-alpine
+    networks:
+      - tyk
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-data:/data
+  authenticator:
+    build:
+      context: ./authenticator
+    ports:
+      - 5001:5001
+    environment:
+      - PORT=5001
+    volumes:
+      - ./authenticator:/app
+      - ./authenticator/node_modules:/app/node_modules
+    command: ["npm", "run", "dev"]
+  posts:
+    build:
+      context: ./comments
+    ports:
+      - 5002:5002
+    environment:
+      - PORT=5002
+    volumes:
+      - ./posts:/app
+      - ./posts/node_modules:/app/node_modules
+    command: ["npm", "run", "dev"]
+  comments:
+    build:
+      context: ./comments
+    ports:
+      - 5003:5003
+    environment:
+      - PORT=5003
+    volumes:
+      - ./comments:/app
+      - ./comments/node_modules:/app/node_modules
+    command: ["npm", "run", "dev"]
+networks:
+  tyk:
+
+volumes:
+  redis-data:

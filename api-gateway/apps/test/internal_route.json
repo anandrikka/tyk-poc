@@ -1,0 +1,36 @@
+{
+  "name": "Demo",
+  "slug": "demo",
+  "api_id": "demo",
+  "org_id": "1",
+  "definition": {
+    "location": "header",
+    "key": "x-api-version"
+  },
+  "use_keyless": true,
+  "internal": true,
+  "proxy": {
+    "listen_path": "/all",
+    "target_url": ""
+  },
+  "version_data": {
+    "not_versioned": true,
+    "versions": {
+      "Default": {
+          "name": "Default",
+          "use_extended_paths": true,
+          "extended_paths": {
+            "url_rewrites": [
+              {
+                "path": "{path}",
+                "match_pattern": "^http:///([^?]*)(\\?(.*))?$",
+                "method": "GET",
+                "rewrite_to": "tyk://$1?check_limits=true"
+              }
+            ]
+          }
+      }
+    }
+  },
+  "active": true
+}
